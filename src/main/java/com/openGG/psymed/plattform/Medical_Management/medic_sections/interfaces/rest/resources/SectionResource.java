@@ -4,6 +4,17 @@ import java.time.LocalDate;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+/**
+ * Resource object used to send data to the client representing a {@code Section}.
+ * Typically used as the response body for endpoints that retrieve medical sections.
+ *
+ * @param id         the unique identifier of the section
+ * @param patientId  the ID of the patient associated with the section
+ * @param type       the type/category of the section (e.g., DIAGNOSIS, THERAPY, NOTES)
+ * @param content    the content or notes of the section
+ * @param createdAt  the date when the section was created
+ */
+
 public record SectionResource(
 
         @Schema(description = "Unique identifier of the medical section", example = "98765")
