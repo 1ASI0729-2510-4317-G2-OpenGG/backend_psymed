@@ -1,0 +1,115 @@
+workspace "PsyMed Platform - Angular/Spring Boot Stack Edition" "Software architecture diagrams for the PsyMed application" {
+model {
+# Personas
+admin = person "Clinical Administrator" "Person who manages and maintains clinical content"
+patient = person "Patient" "Person who accesses and manages their consultations and treatments"
+
+# Sistema de Software
+psyMed = softwareSystem "PsyMed Platform" "Allows administrators to manage clinical information and patients to access their treatments and consultations" {
+# Contenedores
+webApplication = container "Web Application" "Delivers static content and the PsyMed single page application" "Angular, TypeScript" "webapp"
+
+singlePageApplication = container "Single Page Application" "Provides all clinical functionality to administrators and patients via their web browser" "TypeScript, Angular, NGX-Translate, Angular Material" "spa" {
+tags "Web Browser"
+}
+
+apiApplication = container "API Application" "Provides clinical functionality via RESTful API" "Spring Boot, Java" "api" {
+tags "API"
+iam = component "IAM Bounded Context" "Manages authentication and access control" "Spring Component"
+clinical = component "Clinical Bounded Context" "Handles consultations, treatments, and clinical records" "Spring Component"
+profiles = component "Profiles Bounded Context" "Manages user profile information" "Spring Component"
+shared = component "Shared Bounded Context" "Provides shared utilities and abstractions" "Spring Component"
+}
+
+database = container "Database" "Stores clinical information, records, and metadata" "MySQL Server" "database" {
+tags "Database"
+}
+    }
+
+# Relaciones entre personas y sistema
+admin -> psyMed "Manages clinical information using"
+patient -> psyMed "Accesses their consultations and treatments using"
+
+# Relaciones entre contenedores
+admin -> webApplication "Visits psymed.com using" "HTTPS"
+patient -> webApplication "Visits psymed.com using" "HTTPS"
+
+webApplication -> singlePageApplication "Delivers to the user's web browser"
+
+singlePageApplication -> apiApplication "Makes API calls to" "JSON/HTTPS" "REST API"
+
+apiApplication -> database "Reads from and writes to" "Spring Data JPA"
+
+# Relaciones a nivel de componentes (dentro de API Application)
+iam -> database "Reads from and writes to"
+clinical -> database "Reads from and writes to"
+profiles -> database "Reads from and writes to"
+# Shared NO accede directamente a la base de datos
+
+# Interdependencias entre bounded contexts
+clinical -> profiles "Create the profile of a new patient / Get the profile ID by email"
+profiles -> iam "Get user by username / user ID / Create new user"
+# Dependencias de otros bounded contexts en Shared
+iam -> shared "Implements interfaces / extends classes from"
+clinical -> shared "Implements interfaces / extends classes from"
+profiles -> shared "Implements interfaces / extends classes from"
+
+# Relaciones App-Componente
+singlePageApplication -> clinical -> "Manages consultations, treatments, and records"
+singlePageApplication -> profiles -> "Creates and gets profiles"
+singlePageApplication -> iam -> "Sign-Up and Sign-In"
+}
+
+views {
+systemContext psyMed "SystemContext" "The system context diagram for PsyMed" {
+include *
+autoLayout lr
+}
+
+container psyMed "Containers" "The container diagram for PsyMed" {
+include *
+autoLayout lr
+}
+
+component apiApplication "Components" {
+include *
+autoLayout
+}
+
+styles {
+element "Person" {
+shape "Person"
+background "#08427b"
+color "#ffffff"
+}
+element "Software System" {
+background "#1168bd"
+color "#ffffff"
+}
+element "Container" {
+background "#438dd5"
+color "#ffffff"
+}
+element "Web Browser" {
+shape "WebBrowser"
+background "#438dd5"
+color "#ffffff"
+}
+element "API" {
+background "#438dd5"
+color "#ffffff"
+}
+element "Database" {
+shape "Cylinder"
+background "#438dd5"
+color "#ffffff"
+}
+    }
+
+theme default
+}
+
+properties {
+structurizr.groupSeparator "/"
+}
+}
