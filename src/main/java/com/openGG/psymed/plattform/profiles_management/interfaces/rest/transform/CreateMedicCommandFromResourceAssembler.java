@@ -1,0 +1,16 @@
+package com.openGG.psymed.plattform.profiles_management.interfaces.rest.transform;
+import com.openGG.psymed.plattform.profiles_management.domain.model.commands.CreateMedicCommand;
+import com.openGG.psymed.plattform.profiles_management.interfaces.rest.resorces.CreateMedicResource;
+
+public class CreateMedicCommandFromResourceAssembler {
+
+
+    public static CreateMedicCommand toCommandFromResource(CreateMedicResource resource) {
+
+        return new CreateMedicCommand(
+                resource.name(),
+                resource.lastName(),
+                resource.email()
+        );
+    }
+}

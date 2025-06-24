@@ -85,6 +85,8 @@ public class PillController {
     })
     @GetMapping
     public ResponseEntity<List<PillResource>> getAllMedications() {
+        System.out.print("hola123");
+
         var getAllMedicationsQuery = new GetAllPillsQuery();
         var medications = pillQueryService.handle(getAllMedicationsQuery);
         var medicationResources = medications.stream()
