@@ -1,6 +1,6 @@
 package com.openGG.psymed.plattform.profiles.interfaces.rest.resorces;
 
-public record MedicResource(Long id, String name, String lastName, String email) {
+public record MedicResource(Long id, String name, String lastName, String email, String phone, String specialty, String address) {
 
     public MedicResource {
         if (name == null || name.isBlank()) {

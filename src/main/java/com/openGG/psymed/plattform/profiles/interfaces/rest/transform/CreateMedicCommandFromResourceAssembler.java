@@ -10,7 +10,10 @@ public class CreateMedicCommandFromResourceAssembler {
         return new CreateMedicCommand(
                 resource.name(),
                 resource.lastName(),
-                resource.email()
+                resource.email(),
+                resource.phone(),
+                resource.specialty(),
+                resource.address()
         );
     }
 }
