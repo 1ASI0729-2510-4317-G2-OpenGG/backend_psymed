@@ -24,7 +24,7 @@ public class MedicCommandServiceImpl implements MedicCommandService {
         }
 
         // Creación del médico a partir del comando
-        var medic = new Medic(command.name(), command.lastName(), command.email());
+        var medic = new Medic(command.name(), command.lastName(), command.email(), command.phone(), command.specialty(), command.address());
 
         try {
             // Guardar en base de datos
@@ -59,7 +59,7 @@ public class MedicCommandServiceImpl implements MedicCommandService {
                 .orElseThrow(() -> new IllegalStateException("The medic does not exist"));
 
         // Crear un nuevo objeto Medic con los valores actualizados
-        medic = new Medic(command.name(), command.lastName(), command.email());
+        medic = new Medic(command.name(), command.lastName(), command.email(), command.phone(), command.specialty(), command.address());
 
         try {
             // Guardar el médico actualizado

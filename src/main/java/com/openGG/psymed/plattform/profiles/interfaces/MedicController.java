@@ -164,7 +164,7 @@ public class MedicController {
     @PutMapping("/{id}")
     public ResponseEntity<MedicResource> updateMedic(@PathVariable Long id, @RequestBody CreateMedicResource createMedicResource) {
         // Crear un comando de actualización de médico con el id proporcionado
-        var updateMedicCommand = new UpdateMedicCommand(id, createMedicResource.name(), createMedicResource.lastName(), createMedicResource.email());
+        var updateMedicCommand = new UpdateMedicCommand(id, createMedicResource.name(), createMedicResource.lastName(), createMedicResource.email(), createMedicResource.phone(), createMedicResource.specialty(), createMedicResource.address());
 
         try {
             // Llamar al servicio para actualizar el médico
