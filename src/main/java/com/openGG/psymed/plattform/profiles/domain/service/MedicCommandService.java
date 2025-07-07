@@ -8,5 +8,5 @@ public interface MedicCommandService {
 
     void handle(UpdateMedicCommand command);
 
-
+    void handle(UpdateMedicDescriptionCommand command);
 }
