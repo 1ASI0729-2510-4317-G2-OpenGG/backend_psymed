@@ -4,6 +4,6 @@ import com.openGG.psymed.plattform.profiles.interfaces.rest.resorces.MedicResour
 
 public class MedicResourceFromEntityAssembler {
     public static MedicResource toResourceFromEntity(Medic entity){
-        return new MedicResource(entity.getId(), entity.getName(), entity.getLastName(),entity.getEmail(), entity.getPhone(), entity.getSpecialty(), entity.getAddress());
+        return new MedicResource(entity.getId(), entity.getName(), entity.getLastName(),entity.getEmail(), entity.getPhone(), entity.getSpecialty(), entity.getAddress(), entity.getDescription());
     }
 }

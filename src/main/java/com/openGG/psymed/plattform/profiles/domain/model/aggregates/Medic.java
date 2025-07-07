@@ -23,7 +23,7 @@ public class Medic extends AuditableAbstractAggregateRoot<Medic> {
 
     @Column(length = 500)
     @Size(max = 500)
-    private String description;
+    private String description = "No hay descripción";
 
     @ElementCollection
     @CollectionTable(name = "medic_specialties", joinColumns = @JoinColumn(name = "medic_id"))
@@ -48,6 +48,7 @@ public class Medic extends AuditableAbstractAggregateRoot<Medic> {
         this.phone = phone;
         this.specialty = specialty;
         this.address = address;
+        this.description = "No hay descripción";
     }
 
     public Medic() {

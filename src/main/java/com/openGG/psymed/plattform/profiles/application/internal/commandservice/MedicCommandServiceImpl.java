@@ -69,4 +69,21 @@ public class MedicCommandServiceImpl implements MedicCommandService {
             throw new RuntimeException("An error occurred during update: " + e.getMessage());
         }
     }
+
+    @Override
+    public void handle(UpdateMedicDescriptionCommand command) {
+        // Verificación de existencia del médico
+        var medic = medicRepository.findById(command.medicId())
+                .orElseThrow(() -> new IllegalStateException("The medic does not exist"));
+
+        medic.updateDescription(command.description());
+
+        try {
+            // Guardar el médico actualizado
+            medicRepository.save(medic);
+        } catch (Exception e) {
+            // Manejo de error durante la actualización
+            throw new RuntimeException("An error occurred during update: " + e.getMessage());
+        }
+    }
 }

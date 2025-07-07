@@ -1,6 +1,7 @@
 package com.openGG.psymed.plattform.profiles.interfaces;
 import com.openGG.psymed.plattform.profiles.domain.model.commands.DeleteMedicCommand;
 import com.openGG.psymed.plattform.profiles.domain.model.commands.UpdateMedicCommand;
+import com.openGG.psymed.plattform.profiles.domain.model.commands.UpdateMedicDescriptionCommand;
 import com.openGG.psymed.plattform.profiles.domain.model.queries.*;
 import com.openGG.psymed.plattform.profiles.domain.service.MedicCommandService;
 import com.openGG.psymed.plattform.profiles.domain.service.MedicQueryService;
@@ -183,6 +184,32 @@ public class MedicController {
             var medicResource = MedicResourceFromEntityAssembler.toResourceFromEntity(medic.get());
             return ResponseEntity.ok(medicResource);
 
+        } catch (Exception e) {
+            // Si ocurre un error, devolver un error 400
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    @Operation(summary = "Update a description about the medic")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Description updated"),
+            @ApiResponse(responseCode = "404", description = "Medic not found"),
+            @ApiResponse(responseCode = "400", description = "Bad request")
+    })
+    @PatchMapping("/{id}/description")
+    public ResponseEntity<Void> updateDescription(@PathVariable Long id, @RequestBody UpdateMedicDescriptionCommand command) {
+        var updateMedicDescriptionCommand = new UpdateMedicDescriptionCommand(id, command.description());
+
+        try {
+            medicCommandService.handle(updateMedicDescriptionCommand);
+
+            var getMedicByIdQuery = new GetMedicByIdQuery(id);
+            var medic = medicQueryService.handle(getMedicByIdQuery);
+
+            // Si no se encuentra el médico, devolver error 404
+            if (medic.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             // Si ocurre un error, devolver un error 400
             return ResponseEntity.badRequest().build();
