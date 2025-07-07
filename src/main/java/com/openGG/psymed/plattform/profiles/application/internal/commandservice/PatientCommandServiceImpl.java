@@ -24,7 +24,7 @@ public class PatientCommandServiceImpl implements PatientCommandService {
         }
 
         // Creación del paciente a partir del comando
-        var patient = new Patient(command.name(), command.lastName(), command.email());
+        var patient =   new Patient(command.name(), command.lastName(), command.dni(),command.email(), command.phone(), command.birthDate());
 
         try {
             // Guardar en base de datos
@@ -58,8 +58,13 @@ public class PatientCommandServiceImpl implements PatientCommandService {
         var patient = patientRepository.findById(command.patientId())
                 .orElseThrow(() -> new IllegalStateException("The patient does not exist"));
 
-        // Crear un nuevo objeto Patient con los valores actualizados
-        patient = new Patient(command.name(), command.lastName(), command.email());
+        // Coloca los valores actualizados
+        patient.setName(command.name());
+        patient.setLastName(command.lastName());
+        patient.setDni(command.dni());
+        patient.setEmail(command.email());
+        patient.setPhone(command.phone());
+        patient.setBirthDate(command.birthDate());
 
         try {
             // Guardar el paciente actualizado

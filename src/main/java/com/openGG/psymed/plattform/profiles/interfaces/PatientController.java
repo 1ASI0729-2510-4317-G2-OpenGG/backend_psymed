@@ -165,7 +165,7 @@ public class PatientController {
     @PutMapping("/{id}")
     public ResponseEntity<PatientResource> updatePatient(@PathVariable Long id, @RequestBody CreatePatientResource createPatientResource) {
 
-        var updatePatientCommand = new UpdatePatientCommand(id, createPatientResource.name(), createPatientResource.lastName(), createPatientResource.email());
+        var updatePatientCommand = new UpdatePatientCommand(id, createPatientResource.name(), createPatientResource.lastName(), createPatientResource.dni(), createPatientResource.email(), createPatientResource.phone(), createPatientResource.birthDate());
 
         try {
             // Llamar al servicio para actualizar el paciente

@@ -7,9 +7,11 @@ public class CreatePatientCommandFromResourceAssembler {
     public static CreatePatientCommand toCommandFromResource(CreatePatientResource resource) {
 
         return new CreatePatientCommand(
-            resource.name(),
-            resource.lastName(),
-            resource.email()
-        );
+                resource.name(),
+                resource.lastName(),
+                resource.dni(),
+                resource.email(),
+                resource.phone(),
+                resource.birthDate());
     }
 }
