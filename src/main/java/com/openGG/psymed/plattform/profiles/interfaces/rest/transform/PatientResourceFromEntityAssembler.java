@@ -5,6 +5,6 @@ import com.openGG.psymed.plattform.profiles.interfaces.rest.resorces.PatientReso
 
 public class PatientResourceFromEntityAssembler {
     public static PatientResource toResourceFromEntity(Patient entity){
-        return new PatientResource(entity.getId(), entity.getName(), entity.getLastName(),entity.getEmail());
+        return new PatientResource(entity.getId(), entity.getName(), entity.getLastName(), entity.getDni(), entity.getEmail(), entity.getPhone(), entity.getBirthDate());
     }
 }
