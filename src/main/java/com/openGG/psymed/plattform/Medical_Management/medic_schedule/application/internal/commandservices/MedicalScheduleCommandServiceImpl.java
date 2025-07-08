@@ -9,8 +9,11 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 /**
- * Implementation of the command service for managing medical schedules.
- * Responsible for handling the creation logic of {@link MedicalSchedule} instances.
+ * Application service implementation that handles commands related to {@link MedicalSchedule}.
+ * <p>
+ * This service is responsible for creating and deleting medical schedules,
+ * ensuring business rules such as medic ownership are respected.
+ * </p>
  */
 
 @Service
@@ -18,31 +21,34 @@ public class MedicalScheduleCommandServiceImpl implements MedicalScheduleCommand
 
     private final MedicalScheduleRepository repository;
 
-    /**
-     * Constructs a new {@code MedicalScheduleCommandServiceImpl} with the given repository.
-     *
-     * @param repository the repository used to persist medical schedule entities
-     */
-
     public MedicalScheduleCommandServiceImpl(MedicalScheduleRepository repository) {
         this.repository = repository;
     }
 
-    /**
-     * Creates a new medical schedule using the provided command.
-     *
-     * @param command the command containing the required information to create a new medical schedule,
-     *                including background, consultation reason, and consultation date
-     */
-
     @Override
-    public void createMedicalSchedule(CreateMedicalScheduleCommand command) {
-        MedicalSchedule history = new MedicalSchedule(
-                UUID.randomUUID(),
+    public UUID createMedicalSchedule(CreateMedicalScheduleCommand command) {
+        UUID id = UUID.randomUUID();
+        MedicalSchedule schedule = new MedicalSchedule(
+                id,
+                command.medicId(),
+                command.patientId(),
                 command.background(),
                 command.consultationReason(),
                 command.consultationDate()
         );
-        repository.save(history);
+        repository.save(schedule);
+        return id;
+    }
+
+    @Override
+    public void deleteMedicalSchedule(UUID scheduleId, Long medicId) {
+        var schedule = repository.findById(scheduleId)
+                .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
+
+        if (!schedule.getMedicId().equals(medicId)) {
+            throw new SecurityException("You are not allowed to delete this schedule");
+        }
+
+        repository.delete(schedule);
     }
 }

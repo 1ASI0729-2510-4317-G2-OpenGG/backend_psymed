@@ -1,73 +1,87 @@
 package com.openGG.psymed.plattform.Medical_Management.medic_sections.interfaces.rest;
 
-import com.openGG.psymed.plattform.Medical_Management.medic_sections.application.internal.commandservices.SectionCommandServiceImpl;
-import com.openGG.psymed.plattform.Medical_Management.medic_sections.application.internal.queryservices.SectionQueryServiceImpl;
-import com.openGG.psymed.plattform.Medical_Management.medic_sections.domain.model.queries.GetSectionsByPatientIdQuery;
+import com.openGG.psymed.plattform.Medical_Management.medic_sections.domain.model.services.SectionCommandService;
 import com.openGG.psymed.plattform.Medical_Management.medic_sections.interfaces.rest.resources.CreateSectionResource;
 import com.openGG.psymed.plattform.Medical_Management.medic_sections.interfaces.rest.resources.SectionResource;
 import com.openGG.psymed.plattform.Medical_Management.medic_sections.interfaces.rest.transform.CreateSectionCommandFromResourceAssembler;
 import com.openGG.psymed.plattform.Medical_Management.medic_sections.interfaces.rest.transform.SectionResourceFromEntityAssembler;
-import io.swagger.v3.oas.annotations.Operation;
+import com.openGG.psymed.plattform.Medical_Management.medic_sections.infrastructure.acl.external.profiles.ProfileContextFacade;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 /**
- * REST controller for managing medical sections.
- * Provides endpoints for creating and retrieving patient-related medical section records
- * such as diagnoses, therapy notes, or observations.
+ * REST controller for managing medical diagnosis sections for patients.
+ * This controller allows authorized medical users to create and delete their own sections.
  */
 
 @RestController
-@RequestMapping("/api/sections")
-@Tag(name="medical-section", description = "Medical register about diagnosis, therapy, notes")
+@RequestMapping("/api/v1/sections")
+@Tag(name = "medical-diagnoses", description = "Managing a patient's diagnoses")
 public class SectionController {
 
-    private final SectionCommandServiceImpl commandService;
-    private final SectionQueryServiceImpl queryService;
+    private final SectionCommandService commandService;
+    private final CreateSectionCommandFromResourceAssembler commandAssembler;
+    private final SectionResourceFromEntityAssembler sectionAssembler;
+    private final ProfileContextFacade profileContextFacade;
 
     /**
-     * Constructs a new {@code SectionController} with the provided services.
+     * Constructor for injecting required services and assemblers.
      *
-     * @param commandService the service responsible for handling section creation
-     * @param queryService   the service responsible for retrieving sections
+     * @param commandService         the service to handle commands related to sections
+     * @param commandAssembler       assembler to convert request resources into command objects
+     * @param sectionAssembler       assembler to convert domain entities into REST resources
+     * @param profileContextFacade   ACL to resolve medic identity from an email address
      */
 
-    public SectionController(SectionCommandServiceImpl commandService,
-                             SectionQueryServiceImpl queryService) {
+    public SectionController(
+            SectionCommandService commandService,
+            CreateSectionCommandFromResourceAssembler commandAssembler,
+            SectionResourceFromEntityAssembler sectionAssembler,
+            ProfileContextFacade profileContextFacade
+    ) {
         this.commandService = commandService;
-        this.queryService = queryService;
+        this.commandAssembler = commandAssembler;
+        this.sectionAssembler = sectionAssembler;
+        this.profileContextFacade = profileContextFacade;
     }
 
     /**
-     * Creates a new medical section for a patient.
+     * Creates a new medical section for a given patient, based on the authenticated medic.
      *
-     * @param resource the resource object containing the section data
-     * @return the created {@link SectionResource}
+     * @param medicEmail the email address of the authenticated medic (provided in the request header)
+     * @param resource   the request body containing the new section's data
+     * @return a {@link ResponseEntity} with the created {@link SectionResource}
      */
 
     @PostMapping
-    @Operation(summary = "Create new medical section")
-    public SectionResource create(@RequestBody CreateSectionResource resource) {
-        var command = CreateSectionCommandFromResourceAssembler.toCommandFromResource(resource);
-        var section = commandService.handle(command);
-        return SectionResourceFromEntityAssembler.toResourceFromEntity(section);
+    public ResponseEntity<SectionResource> create(
+            @RequestHeader("X-User-Email") String medicEmail,
+            @RequestBody CreateSectionResource resource
+    ) {
+        Long medicId = profileContextFacade.getMedicIdByEmail(medicEmail);
+        var command = commandAssembler.toCommand(resource, medicId);
+        var section = commandService.create(command);
+        var response = sectionAssembler.toResource(section);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-
     /**
-     * Retrieves all medical sections associated with a specific patient.
+     * Deletes a section if the authenticated medic is the owner of that section.
      *
-     * @param patientId the ID of the patient
-     * @return a list of {@link SectionResource} belonging to the given patient
+     * @param sectionId  the ID of the section to delete
+     * @param medicEmail the email of the medic making the request (used for ACL validation)
+     * @return an empty {@link ResponseEntity} with HTTP 204 No Content
      */
 
-    @GetMapping("/patient/{patientId}")
-    public List<SectionResource> getByPatient(@PathVariable Long patientId) {
-        return queryService.handle(new GetSectionsByPatientIdQuery(patientId))
-                .stream()
-                .map(SectionResourceFromEntityAssembler::toResourceFromEntity)
-                .toList();
+    @DeleteMapping("/{sectionId}")
+    public ResponseEntity<Void> delete(
+            @PathVariable Long sectionId,
+            @RequestHeader("X-User-Email") String medicEmail
+    ) {
+        Long medicId = profileContextFacade.getMedicIdByEmail(medicEmail);
+        commandService.deleteIfOwner(sectionId, medicId);
+        return ResponseEntity.noContent().build();
     }
 }

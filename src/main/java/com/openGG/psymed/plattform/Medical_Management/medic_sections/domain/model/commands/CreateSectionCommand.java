@@ -17,5 +17,6 @@ public record CreateSectionCommand(
         Long patientId,
         String type,
         String content,
-        LocalDate createdAt
+        LocalDate createdAt,
+        Long medicId
 ) { }

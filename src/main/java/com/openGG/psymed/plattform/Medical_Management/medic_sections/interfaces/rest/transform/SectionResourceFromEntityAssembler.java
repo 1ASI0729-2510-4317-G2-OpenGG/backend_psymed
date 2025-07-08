@@ -2,28 +2,31 @@ package com.openGG.psymed.plattform.Medical_Management.medic_sections.interfaces
 
 import com.openGG.psymed.plattform.Medical_Management.medic_sections.domain.model.entities.Section;
 import com.openGG.psymed.plattform.Medical_Management.medic_sections.interfaces.rest.resources.SectionResource;
+import org.springframework.stereotype.Component;
 
 /**
- * Assembler class responsible for transforming a {@link Section} domain entity
- * into a {@link SectionResource} used in REST responses.
+ * Assembler responsible for converting a {@link Section} domain entity
+ * into a {@link SectionResource} to be used in the REST API layer.
  */
 
+@Component
 public class SectionResourceFromEntityAssembler {
 
     /**
-     * Converts a {@link Section} entity into a {@link SectionResource}.
+     * Transforms a {@code Section} entity into a {@code SectionResource}.
      *
      * @param section the domain entity representing a medical section
-     * @return a resource object formatted for REST responses
+     * @return the resource representation used in the REST layer
      */
 
-    public static SectionResource toResourceFromEntity(Section section) {
+    public SectionResource toResource(Section section) {
         return new SectionResource(
                 section.getId(),
                 section.getPatientId(),
                 section.getType(),
                 section.getContent(),
-                section.getCreatedAt()
+                section.getCreatedAt(),
+                section.getMedicId()
         );
     }
 }

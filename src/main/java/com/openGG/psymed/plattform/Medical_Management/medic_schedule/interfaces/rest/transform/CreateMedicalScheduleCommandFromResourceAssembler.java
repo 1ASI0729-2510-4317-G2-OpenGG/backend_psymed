@@ -5,20 +5,23 @@ import com.openGG.psymed.plattform.Medical_Management.medic_schedule.interfaces.
 
 /**
  * Assembler class responsible for transforming a {@link CreateMedicalScheduleResource}
- * into a {@link CreateMedicalScheduleCommand}, which can be used in the application layer.
+ * into a {@link CreateMedicalScheduleCommand} to be processed by the application layer.
  */
 
 public class CreateMedicalScheduleCommandFromResourceAssembler {
 
     /**
-     * Converts a {@link CreateMedicalScheduleResource} into a {@link CreateMedicalScheduleCommand}.
+     * Converts a {@link CreateMedicalScheduleResource} and medic ID into a {@link CreateMedicalScheduleCommand}.
      *
-     * @param resource the REST resource received from the client
-     * @return a command object used to trigger the creation of a medical schedule
+     * @param resource the resource received from the client representing the schedule creation request
+     * @param medicId  the ID of the medic creating the schedule (resolved from authentication or context)
+     * @return a command object representing the request to create a new medical schedule
      */
 
-    public static CreateMedicalScheduleCommand toCommand(CreateMedicalScheduleResource resource) {
+    public static CreateMedicalScheduleCommand toCommand(CreateMedicalScheduleResource resource, Long medicId) {
         return new CreateMedicalScheduleCommand(
+                medicId,
+                resource.patientId(),
                 resource.background(),
                 resource.consultationReason(),
                 resource.consultationDate()
