@@ -14,6 +14,9 @@ import java.time.LocalDate;
  */
 
 public record CreateMedicalScheduleResource(
+        Long patientId,
+
+
         @Schema(description = "Patient history", example = "Patient with history of anxiety")
         String background,
         @Schema(description = "Reason for consultation", example = "Consultation for insomnia and stress")

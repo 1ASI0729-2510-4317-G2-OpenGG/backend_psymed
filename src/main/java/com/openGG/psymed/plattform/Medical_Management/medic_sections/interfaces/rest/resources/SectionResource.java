@@ -1,7 +1,6 @@
 package com.openGG.psymed.plattform.Medical_Management.medic_sections.interfaces.rest.resources;
 
 import java.time.LocalDate;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -13,14 +12,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @param type       the type/category of the section (e.g., DIAGNOSIS, THERAPY, NOTES)
  * @param content    the content or notes of the section
  * @param createdAt  the date when the section was created
+ * @param medicId the email of the doctor who created the section
  */
-
 public record SectionResource(
 
-        @Schema(description = "Unique identifier of the medical section", example = "98765")
+        @Schema(description = "Unique identifier of the medical section", example = "0")
         Long id,
 
-        @Schema(description = "ID of the patient to whom this medical section belongs", example = "12345")
+        @Schema(description = "ID of the patient to whom this medical section belongs", example = "0")
         Long patientId,
 
         @Schema(description = "Type of the medical section (e.g., DIAGNOSIS, THERAPY, NOTES)", example = "THERAPY")
@@ -30,6 +29,9 @@ public record SectionResource(
         String content,
 
         @Schema(description = "Date when the medical section was created", example = "2025-06-12")
-        LocalDate createdAt
+        LocalDate createdAt,
+
+        @Schema(description = "Email of the medic who created the section", example = "dr.juarez@example.com")
+        Long medicId
 
 ) {}
