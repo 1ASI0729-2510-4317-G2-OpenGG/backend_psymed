@@ -1,6 +1,6 @@
 package com.openGG.psymed.plattform.profiles.application.outboundservices.acl;
 
-import com.openGG.psymed.plattform.Patient_Management.clinicalhistory.interfaces.acl.ClinicalHistoryContextFacade;
+import com.openGG.psymed.plattform.Patient.clinicalhistory.interfaces.acl.ClinicalHistoryContextFacade;
 import com.openGG.psymed.plattform.profiles.application.outboundservices.ExternalClinicalHistoryService;
 import org.springframework.stereotype.Service;
 
